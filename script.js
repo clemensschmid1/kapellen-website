@@ -1,3 +1,8 @@
+// Vercel Analytics
+import { inject } from '@vercel/analytics';
+
+inject();
+
 // Navigation functionality
 const navToggle = document.getElementById('nav-toggle');
 const navMenu = document.getElementById('nav-menu');
