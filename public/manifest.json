@@ -1,0 +1,17 @@
+{
+  "name": "Kapelle Mariä Opferung Osterhofen",
+  "short_name": "Kapelle Osterhofen",
+  "description": "Die Kapelle Mariä Opferung in Bad Waldsee - Osterhofen",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF9F6",
+  "theme_color": "#8B4513",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
+
