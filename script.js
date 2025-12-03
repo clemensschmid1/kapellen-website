@@ -3,14 +3,24 @@ import { inject } from '@vercel/analytics';
 
 inject();
 
-// Scroll Progress Bar
+// Scroll Progress Bar with throttling for performance
 const scrollProgress = document.getElementById('scroll-progress');
 if (scrollProgress) {
-    window.addEventListener('scroll', () => {
+    let ticking = false;
+    
+    const updateProgress = () => {
         const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (window.scrollY / windowHeight) * 100;
-        scrollProgress.style.width = scrolled + '%';
-    });
+        scrollProgress.style.width = Math.min(100, Math.max(0, scrolled)) + '%';
+        ticking = false;
+    };
+    
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(updateProgress);
+            ticking = true;
+        }
+    }, { passive: true });
 }
 
 // Navigation functionality
@@ -33,8 +43,33 @@ navLinks.forEach(link => {
     link.addEventListener('click', () => {
         navMenu.classList.remove('active');
         navToggle.classList.remove('active');
+        navToggle.setAttribute('aria-expanded', 'false');
     });
 });
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (navMenu && navToggle && 
+        !navMenu.contains(e.target) && 
+        !navToggle.contains(e.target) &&
+        navMenu.classList.contains('active')) {
+        navMenu.classList.remove('active');
+        navToggle.classList.remove('active');
+        navToggle.setAttribute('aria-expanded', 'false');
+    }
+});
+
+// Prevent body scroll when mobile menu is open
+if (navMenu) {
+    const observer = new MutationObserver(() => {
+        if (navMenu.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    });
+    observer.observe(navMenu, { attributes: true, attributeFilter: ['class'] });
+}
 
 // Navbar scroll effect
 let lastScroll = 0;
@@ -286,14 +321,35 @@ if ('PerformanceObserver' in window) {
         const perfObserver = new PerformanceObserver((list) => {
             for (const entry of list.getEntries()) {
                 if (entry.entryType === 'navigation') {
-                    console.log('Page Load Time:', entry.loadEventEnd - entry.fetchStart, 'ms');
+                    const loadTime = entry.loadEventEnd - entry.fetchStart;
+                    if (loadTime > 3000) {
+                        console.warn('Slow page load detected:', loadTime, 'ms');
+                    }
                 }
             }
         });
         perfObserver.observe({ entryTypes: ['navigation'] });
     } catch (e) {
-        console.log('Performance monitoring not available');
+        // Performance monitoring not available
     }
+}
+
+// Mobile-specific optimizations
+if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+    // Prevent double-tap zoom on buttons
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+    
+    // Optimize scroll performance
+    document.addEventListener('touchmove', (e) => {
+        // Allow default scroll behavior
+    }, { passive: true });
 }
 
 // Contact Form Handling
