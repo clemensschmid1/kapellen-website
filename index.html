@@ -63,31 +63,34 @@
     </script>
 </head>
 <body>
+    <!-- Skip to Content Link -->
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+    
     <!-- Navigation -->
-    <nav class="navbar" id="navbar">
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Hauptnavigation">
         <div class="nav-container">
             <div class="nav-logo">
                 <h2>Kapelle Mariä Opferung</h2>
                 <p class="nav-subtitle">Bad Waldsee - Osterhofen</p>
             </div>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="#home" class="nav-link">Start</a></li>
-                <li><a href="#geschichte" class="nav-link">Über uns</a></li>
-                <li><a href="#kunstwerke" class="nav-link">Kunstwerke</a></li>
-                <li><a href="#veranstaltungen" class="nav-link">Veranstaltungen</a></li>
-                <li><a href="#galerie" class="nav-link">Galerie</a></li>
-                <li><a href="#kontakt" class="nav-link">Kontakt</a></li>
+            <ul class="nav-menu" id="nav-menu" role="menubar">
+                <li role="none"><a href="#home" class="nav-link" role="menuitem" aria-label="Zur Startseite">Start</a></li>
+                <li role="none"><a href="#geschichte" class="nav-link" role="menuitem" aria-label="Über die Kapelle">Über uns</a></li>
+                <li role="none"><a href="#kunstwerke" class="nav-link" role="menuitem" aria-label="Kunstwerke und Architektur">Kunstwerke</a></li>
+                <li role="none"><a href="#veranstaltungen" class="nav-link" role="menuitem" aria-label="Veranstaltungen und Termine">Veranstaltungen</a></li>
+                <li role="none"><a href="#galerie" class="nav-link" role="menuitem" aria-label="Bildergalerie">Galerie</a></li>
+                <li role="none"><a href="#kontakt" class="nav-link" role="menuitem" aria-label="Kontakt und Informationen">Kontakt</a></li>
             </ul>
-            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
-                <span></span>
-                <span></span>
-                <span></span>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Navigation ein- oder ausblenden" aria-expanded="false" aria-controls="nav-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
             </button>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
+    <section id="home" class="hero" aria-label="Hero-Bereich">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 class="hero-title">Kapelle Mariä Opferung</h1>
@@ -98,6 +101,7 @@
     </section>
 
     <!-- Introduction Section -->
+    <main id="main-content">
     <section id="geschichte" class="section">
         <div class="container">
             <h2 class="section-title">Über die Kapelle</h2>
@@ -764,7 +768,11 @@
             </div>
         </div>
     </footer>
+    </main>
 
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+    
     <script type="module" src="/script.js"></script>
 </body>
 </html>

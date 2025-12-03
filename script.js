@@ -3,17 +3,28 @@ import { inject } from '@vercel/analytics';
 
 inject();
 
+// Scroll Progress Bar
+const scrollProgress = document.getElementById('scroll-progress');
+if (scrollProgress) {
+    window.addEventListener('scroll', () => {
+        const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (window.scrollY / windowHeight) * 100;
+        scrollProgress.style.width = scrolled + '%';
+    });
+}
+
 // Navigation functionality
 const navToggle = document.getElementById('nav-toggle');
 const navMenu = document.getElementById('nav-menu');
 const navLinks = document.querySelectorAll('.nav-link');
 const navbar = document.getElementById('navbar');
 
-// Mobile menu toggle
+// Mobile menu toggle with accessibility
 if (navToggle) {
     navToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
+        const isActive = navMenu.classList.toggle('active');
         navToggle.classList.toggle('active');
+        navToggle.setAttribute('aria-expanded', isActive);
     });
 }
 

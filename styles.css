@@ -67,6 +67,20 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    scroll-padding-top: 100px;
+}
+
+/* Scroll Progress Bar */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-dark) 100%);
+    z-index: 10000;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.5);
 }
 
 /* Sophisticated Typography */
@@ -142,6 +156,7 @@ a {
     z-index: 1000;
     transition: var(--transition);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: env(safe-area-inset-top);
 }
 
 .navbar.scrolled {
@@ -433,6 +448,11 @@ a {
     margin: 0 auto var(--spacing-xl);
     line-height: 1.9;
     font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+main {
+    padding-top: 0;
 }
 
 /* Content Grid */
@@ -445,32 +465,72 @@ a {
 }
 
 .text-content {
-    font-size: 1.1rem;
+    font-size: 1.125rem;
     line-height: 1.9;
+    color: var(--text-medium);
+}
+
+.text-content p {
+    margin-bottom: var(--spacing-lg);
+}
+
+.text-content p:last-child {
+    margin-bottom: 0;
 }
 
 .image-placeholder {
     background: linear-gradient(135deg, var(--bg-alt) 0%, var(--bg-light) 100%);
-    border-radius: 10px;
-    padding: 3rem;
-    min-height: 300px;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-2xl);
+    min-height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 20px var(--shadow);
+    box-shadow: var(--shadow);
     border: 2px dashed var(--gold-light);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.image-placeholder::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(212, 175, 55, 0.08) 50%, transparent 70%);
+    animation: shimmer 4s infinite;
+}
+
+.image-placeholder:hover {
+    border-color: var(--gold);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .placeholder-content {
     text-align: center;
     color: var(--text-light);
+    position: relative;
+    z-index: 1;
 }
 
 .placeholder-content p {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.01em;
+}
+
+.placeholder-content small {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    font-weight: 400;
+    display: block;
+    margin-top: var(--spacing-xs);
 }
 
 /* Subsections */
@@ -479,11 +539,24 @@ a {
 }
 
 .subsection-title {
-    font-size: 2rem;
+    font-size: clamp(1.75rem, 3.5vw, 2.25rem);
     color: var(--primary-color);
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid var(--gold-light);
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 3px solid var(--gold-light);
+    position: relative;
+    letter-spacing: -0.02em;
+}
+
+.subsection-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: var(--radius-full);
 }
 
 /* Sorrows Grid */
@@ -535,18 +608,23 @@ a {
 .bible-ref {
     font-style: italic;
     color: var(--text-light);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     margin-bottom: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
 }
 
 .memorial-day {
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 1.125rem;
     color: var(--primary-color);
-    margin-top: 2rem;
-    padding: 1rem;
-    background: var(--bg-alt);
-    border-radius: 5px;
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, var(--bg-alt) 0%, var(--bg-light) 100%);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--gold);
+    box-shadow: var(--shadow-sm);
+    font-weight: 500;
 }
 
 /* Artwork Cards */
@@ -596,20 +674,33 @@ a {
 
 .note {
     font-style: italic;
-    color: var(--text-light);
-    padding: 1rem;
-    background: var(--bg-alt);
-    border-left: 3px solid var(--gold);
-    margin-top: 1rem;
+    color: var(--text-medium);
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, var(--bg-alt) 100%);
+    border-left: 4px solid var(--gold);
+    margin-top: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    line-height: 1.8;
+    position: relative;
+}
+
+.note::before {
+    content: 'ℹ️';
+    position: absolute;
+    left: var(--spacing-md);
+    top: var(--spacing-md);
+    font-size: 1.2rem;
+    opacity: 0.6;
 }
 
 .style-note {
     font-size: 0.95rem;
     font-style: italic;
-    color: var(--text-light);
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--gold-light);
+    color: var(--text-medium);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 2px solid var(--gold-light);
+    line-height: 1.7;
 }
 
 /* Altar Content */
@@ -1432,6 +1523,19 @@ a {
     .contact-form-container {
         padding: var(--spacing-lg);
     }
+    
+    .gallery-item:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+    
+    .image-placeholder {
+        min-height: 250px;
+        padding: var(--spacing-xl);
+    }
+    
+    .text-content {
+        font-size: 1rem;
+    }
 }
 
 /* Artwork Navigation */
@@ -1494,9 +1598,17 @@ a {
 }
 
 .event-icon {
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-bottom: var(--spacing-md);
     filter: grayscale(0.2);
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.event-card:hover .event-icon {
+    filter: grayscale(0);
+    transform: scale(1.15) rotate(5deg);
+    animation: float 3s ease-in-out infinite;
 }
 
 .event-card h3 {
@@ -1546,11 +1658,47 @@ a {
     transition: var(--transition);
     aspect-ratio: 4 / 3;
     cursor: pointer;
+    background: var(--bg-white);
+}
+
+.gallery-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0) 0%, rgba(212, 175, 55, 0.1) 100%);
+    opacity: 0;
+    transition: opacity var(--transition);
+    z-index: 1;
+}
+
+.gallery-item:hover::before {
+    opacity: 1;
 }
 
 .gallery-item:hover {
-    transform: translateY(-6px);
+    transform: translateY(-8px) scale(1.02);
     box-shadow: var(--shadow-xl);
+}
+
+.gallery-item::after {
+    content: '🔍';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 2rem;
+    opacity: 0;
+    transition: all var(--transition);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.gallery-item:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
 }
 
 .gallery-placeholder {
@@ -1563,6 +1711,28 @@ a {
     justify-content: center;
     color: var(--text-light);
     border: 2px dashed var(--gold-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-placeholder::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(212, 175, 55, 0.1) 50%, transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
 }
 
 .gallery-placeholder svg {
@@ -1657,9 +1827,74 @@ a {
 }
 
 .contact-icon {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin-bottom: var(--spacing-md);
     text-align: center;
+    filter: grayscale(0.3);
+    transition: var(--transition);
+}
+
+.contact-card:hover .contact-icon {
+    filter: grayscale(0);
+    transform: scale(1.1);
+}
+
+/* Focus States for Accessibility */
+*:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* Skip to Content Link */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem 2rem;
+    z-index: 10001;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 0 0 8px 0;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Loading States */
+.loading-skeleton {
+    background: linear-gradient(90deg, var(--bg-alt) 25%, var(--bg-light) 50%, var(--bg-alt) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+    border-radius: var(--radius-md);
+}
+
+/* Touch Improvements for Mobile */
+@media (hover: none) and (pointer: coarse) {
+    .btn-primary,
+    .nav-link,
+    .gallery-item,
+    .artwork-nav-link {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .gallery-item:hover {
+        transform: none;
+    }
+    
+    .gallery-item:active {
+        transform: scale(0.98);
+    }
 }
 
 /* Reduced Motion Support */
@@ -1671,6 +1906,10 @@ a {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+    
+    .scroll-progress {
+        display: none;
     }
 }
 
