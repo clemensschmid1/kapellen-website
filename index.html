@@ -73,6 +73,12 @@
     <!-- Skip to Content Link -->
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
     
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scroll-progress" role="progressbar" aria-label="Scroll-Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    
+    <!-- Reading Progress Indicator -->
+    <div class="reading-progress" id="reading-progress" role="progressbar" aria-label="Lese-Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    
     <!-- Navigation -->
     <nav class="navbar" id="navbar" role="navigation" aria-label="Hauptnavigation">
         <div class="nav-container">
@@ -110,6 +116,16 @@
 
     <!-- Introduction Section -->
     <main id="main-content">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb" aria-label="Breadcrumb" id="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb-list">
+                <li><a href="#home">Start</a></li>
+                <li aria-current="page" class="breadcrumb-current"></li>
+            </ol>
+        </div>
+    </nav>
+    
     <section id="geschichte" class="section">
         <div class="container">
             <h2 class="section-title">Über die Kapelle</h2>
@@ -121,14 +137,22 @@
                 </div>
                 <div class="image-placeholder">
                     <div class="placeholder-content">
-                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 1rem; opacity: 0.3;">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                            <polyline points="21 15 16 10 5 21"/>
+                        <svg width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="placeholder-icon">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                            <path d="M12 22V12"/>
+                            <path d="M2 7l10 5 10-5"/>
+                            <path d="M7 12l5 5 5-5"/>
                         </svg>
-                        <p>Kapelle Mariä Opferung</p>
-                        <small>Außenansicht der Kapelle</small>
-                        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-light);">Bild kann hier eingefügt werden</p>
+                        <p class="placeholder-title">Kapelle Mariä Opferung</p>
+                        <small class="placeholder-subtitle">Außenansicht der Kapelle</small>
+                        <div class="placeholder-badge">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                            <span>Bild kann hier eingefügt werden</span>
+                        </div>
                     </div>
                 </div>
             </div>

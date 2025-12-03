@@ -11,7 +11,9 @@ if (scrollProgress) {
     const updateProgress = () => {
         const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (window.scrollY / windowHeight) * 100;
-        scrollProgress.style.width = Math.min(100, Math.max(0, scrolled)) + '%';
+        const progress = Math.min(100, Math.max(0, scrolled));
+        scrollProgress.style.width = progress + '%';
+        scrollProgress.setAttribute('aria-valuenow', Math.round(progress));
         ticking = false;
     };
     
@@ -21,6 +23,113 @@ if (scrollProgress) {
             ticking = true;
         }
     }, { passive: true });
+}
+
+// Reading Progress Indicator (based on main content)
+const readingProgress = document.getElementById('reading-progress');
+const mainContent = document.getElementById('main-content');
+if (readingProgress && mainContent) {
+    let readingTicking = false;
+    
+    const updateReadingProgress = () => {
+        const contentTop = mainContent.offsetTop;
+        const contentHeight = mainContent.offsetHeight;
+        const windowHeight = window.innerHeight;
+        const scrollY = window.scrollY;
+        
+        // Calculate reading progress within main content
+        const contentStart = contentTop;
+        const contentEnd = contentTop + contentHeight;
+        const viewportCenter = scrollY + windowHeight / 2;
+        
+        let progress = 0;
+        if (viewportCenter >= contentStart && viewportCenter <= contentEnd) {
+            progress = ((viewportCenter - contentStart) / contentHeight) * 100;
+        } else if (viewportCenter > contentEnd) {
+            progress = 100;
+        }
+        
+        readingProgress.style.width = Math.min(100, Math.max(0, progress)) + '%';
+        readingProgress.setAttribute('aria-valuenow', Math.round(progress));
+        readingTicking = false;
+    };
+    
+    window.addEventListener('scroll', () => {
+        if (!readingTicking) {
+            window.requestAnimationFrame(updateReadingProgress);
+            readingTicking = true;
+        }
+    }, { passive: true });
+    
+    // Initial update
+    updateReadingProgress();
+}
+
+// Breadcrumb Navigation
+const breadcrumb = document.getElementById('breadcrumb');
+const breadcrumbCurrent = breadcrumb?.querySelector('.breadcrumb-current');
+const sectionTitles = {
+    'home': 'Start',
+    'geschichte': 'Über die Kapelle',
+    'kunstwerke': 'Kunstwerke',
+    'veranstaltungen': 'Veranstaltungen',
+    'galerie': 'Galerie',
+    'kontakt': 'Kontakt',
+    'impressum': 'Impressum',
+    'datenschutz': 'Datenschutz'
+};
+
+function updateBreadcrumb() {
+    if (!breadcrumb || !breadcrumbCurrent) return;
+    
+    const scrollY = window.scrollY + 150; // Offset for better UX
+    let currentSection = 'home';
+    
+    // Use sections variable that's defined later in the code
+    const allSections = document.querySelectorAll('section[id]');
+    
+    allSections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+        
+        if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+            currentSection = sectionId;
+        }
+    });
+    
+    // Update breadcrumb text
+    const title = sectionTitles[currentSection] || 'Start';
+    breadcrumbCurrent.textContent = title;
+    
+    // Show/hide breadcrumb based on scroll position
+    if (window.scrollY > 200) {
+        breadcrumb.style.opacity = '1';
+        breadcrumb.style.transform = 'translateY(0)';
+    } else {
+        breadcrumb.style.opacity = '0';
+        breadcrumb.style.transform = 'translateY(-10px)';
+    }
+}
+
+if (breadcrumb) {
+    breadcrumb.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    breadcrumb.style.opacity = '0';
+    breadcrumb.style.transform = 'translateY(-10px)';
+    
+    let breadcrumbTicking = false;
+    window.addEventListener('scroll', () => {
+        if (!breadcrumbTicking) {
+            window.requestAnimationFrame(() => {
+                updateBreadcrumb();
+                breadcrumbTicking = false;
+            });
+            breadcrumbTicking = true;
+        }
+    }, { passive: true });
+    
+    // Initial update
+    updateBreadcrumb();
 }
 
 // Navigation functionality
@@ -360,19 +469,51 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
     }, { passive: true });
 }
 
-// Contact Form Handling
+// Enhanced Contact Form Handling with Validation
 const contactForm = document.getElementById('contact-form');
 if (contactForm) {
+    const inputs = contactForm.querySelectorAll('input, textarea');
+    
+    // Real-time validation
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.classList.contains('error')) {
+                validateField(this);
+            }
+        });
+    });
+    
+    // Form submission with validation
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        
+        let isValid = true;
+        inputs.forEach(input => {
+            if (!validateField(input)) {
+                isValid = false;
+            }
+        });
+        
+        if (!isValid) {
+            // Focus first invalid field
+            const firstInvalid = contactForm.querySelector('.error');
+            if (firstInvalid) {
+                firstInvalid.focus();
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+        }
         
         // Get form data
         const formData = new FormData(contactForm);
         const data = Object.fromEntries(formData);
         
-        // Here you would typically send the data to a server
-        // For now, we'll just show a success message
-        alert('Vielen Dank für Ihre Nachricht! Wir werden uns in Kürze bei Ihnen melden.');
+        // Show success message
+        showFormSuccess(contactForm);
         contactForm.reset();
         
         // In production, you would use something like:
@@ -382,6 +523,78 @@ if (contactForm) {
         //     body: JSON.stringify(data)
         // })
     });
+}
+
+// Form Validation Function
+function validateField(field) {
+    const value = field.value.trim();
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Remove previous error state
+    field.classList.remove('error', 'valid');
+    const existingError = field.parentElement.querySelector('.error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Required field validation
+    if (field.hasAttribute('required') && !value) {
+        isValid = false;
+        errorMessage = 'Dieses Feld ist erforderlich.';
+    }
+    
+    // Email validation
+    if (field.type === 'email' && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            isValid = false;
+            errorMessage = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+        }
+    }
+    
+    // Min length validation
+    if (field.hasAttribute('minlength') && value.length < parseInt(field.getAttribute('minlength'))) {
+        isValid = false;
+        errorMessage = `Bitte geben Sie mindestens ${field.getAttribute('minlength')} Zeichen ein.`;
+    }
+    
+    // Update field state
+    if (!isValid && value) {
+        field.classList.add('error');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = errorMessage;
+        errorDiv.setAttribute('role', 'alert');
+        field.parentElement.appendChild(errorDiv);
+    } else if (isValid && value) {
+        field.classList.add('valid');
+    }
+    
+    return isValid;
+}
+
+// Show Form Success Message
+function showFormSuccess(form) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'form-success';
+    successDiv.setAttribute('role', 'alert');
+    successDiv.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span>Vielen Dank für Ihre Nachricht! Wir werden uns in Kürze bei Ihnen melden.</span>
+    `;
+    
+    form.parentElement.insertBefore(successDiv, form);
+    
+    // Remove success message after 5 seconds
+    setTimeout(() => {
+        successDiv.style.opacity = '0';
+        successDiv.style.transform = 'translateY(-10px)';
+        setTimeout(() => successDiv.remove(), 300);
+    }, 5000);
 }
 
 // Smooth scroll for artwork navigation links
